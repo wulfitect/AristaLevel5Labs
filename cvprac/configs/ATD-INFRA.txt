@@ -1,0 +1,53 @@
+vrf instance MGMT
+!
+daemon TerminAttr
+   exec /usr/bin/TerminAttr -cvcompression=gzip -smashexcludes=ale,flexCounter,hardware,kni,pulse,strata -ingestexclude=/Sysdb/cell/1/agent,/Sysdb/cell/2/agent -cvaddr=192.168.0.5:9910 -cvauth=token,/tmp/token -cvvrf=MGMT -taillogs -disableaaa
+  no shutdown
+!
+alias mlag-reload bash /mnt/flash/shut_intfs && sudo shutdown now -r
+alias conint sh interface | i connected
+alias senz show interface counter error | nz
+alias shmc show int | awk '/^[A-Z]/ { intf = $1 } /, address is/ { print intf, $6 }'
+alias snz show interface counter | nz
+alias spd show port-channel %1 detail all
+alias sqnz show interface counter queue | nz
+alias srnz show interface counter rate | nz
+alias intdesc
+   !! Usage: intdesc interface-name description
+   10 config
+   20 int %1
+   30 desc %2
+   40 exit
+!
+dns domain arista.lab
+!
+service routing protocols model multi-agent
+!
+ntp server vrf MGMT 192.168.0.1 iburst source Management0
+!
+radius-server host 192.168.0.1 vrf MGMT key 7 0207165218120E
+!
+aaa group server radius atds
+   server 192.168.0.1 vrf MGMT
+!
+aaa authentication login default group atds local
+aaa authorization exec default group atds local
+aaa authorization commands all default local
+!
+username Script secret sha512 $6$PNfpb9anSBQ5/aia$phaa3ar5pwkntenD9WHc6Ed5b96lbW0dc0bjtwPnFLaDiCK8D5Cjl6ewP/xdNbl4PtS6Paq.3SssN8pj05NQm.
+username admin privilege 15 role network-admin secret 5 $1$5O85YVVn$HrXcfOivJEnISTMb6xrJc.
+username arista privilege 15 role network-admin secret 5 $1$4VjIjfd1$XkUVulbNDESHFzcxDU.Tk1
+!
+username arista ssh-key ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCRkqqAOIVhEBY6BsIlBCNk6Mf2MNStNZP4nNkNQHigRNXpHfocb5MI+MjRUqAws6tHIAPTurBXzap9CD0qwHFOsa4kVWQDLOdREkf919rTOlLul6y0OY1KCBUib0jHGyNrfw11IdDgQf5P42xndAdrS/hKtfsamiY6OChNsmL8i60KHw9lbvIE1xaptbxy0+hpa7bcEMo68jg/VdxfnQO1DjzIDn1reTyhf2Ay3ElPEq+YhhBX8wLLRn0YJZZ8Sh1FjAHXfTMFab1Wyy0m7Jx9GaRkzXMKzAgjrhY9iIGS44cQR4ZOuelvlS7CH1htHGDc2QDHnCr9nCGhFlf1amrD arista@a28933-c415-1757176293-1-b24ff8fd
+!
+ip radius source-interface Management 0
+!
+ip routing vrf MGMT
+!
+ip route vrf MGMT 0.0.0.0/0 192.168.0.1
+!
+management api http-commands
+   no shutdown
+   vrf MGMT
+     no shutdown
+!
