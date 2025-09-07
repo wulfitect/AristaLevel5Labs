@@ -1,0 +1,61 @@
+path: "{{lookup('env','PWD')}}"
+
+CVP_CONFIGLETS:
+  OSPF_spine1: "{{ lookup('file','{{ path }}/configs/spine1.cfg') }}"
+  OSPF_spine2: "{{ lookup('file','{{ path }}/configs/spine2.cfg') }}"
+  OSPF_spine3: "{{ lookup('file','{{ path }}/configs/spine3.cfg') }}"
+  OSPF_spine4: "{{ lookup('file','{{ path }}/configs/spine4.cfg') }}"
+  OSPF_leaf1: "{{ lookup('file','{{ path }}/configs/leaf1.cfg') }}"
+  OSPF_leaf2: "{{ lookup('file','{{ path }}/configs/leaf2.cfg') }}"
+  OSPF_leaf3: "{{ lookup('file','{{ path }}/configs/leaf3.cfg') }}"
+  OSPF_leaf4: "{{ lookup('file','{{ path }}/configs/leaf4.cfg') }}"
+
+CVP_DEVICES:
+  - fqdn: 'leaf1'
+    parentContainerName: 'Leaf'
+    configlets:
+      - 'ATD-INFRA'
+      - 'leaf1-base'
+      - 'OSPF_leaf1'
+  - fqdn: 'leaf2'
+    parentContainerName: 'Leaf'
+    configlets:
+      - 'ATD-INFRA'
+      - 'leaf2-base'
+      - 'OSPF_leaf2'
+  - fqdn: 'leaf3'
+    parentContainerName: 'Leaf'
+    configlets:
+      - 'ATD-INFRA'
+      - 'leaf3-base'
+      - 'OSPF_leaf3'
+  - fqdn: 'leaf4'
+    parentContainerName: 'Leaf'
+    configlets:
+      - 'ATD-INFRA'
+      - 'leaf4-base'
+      - 'OSPF_leaf4'
+  - fqdn: 'spine1'
+    parentContainerName: 'Spine'
+    configlets:
+      - 'ATD-INFRA'
+      - 'spine1-base'
+      - 'OSPF_spine1'
+  - fqdn: 'spine2'
+    parentContainerName: 'Spine'
+    configlets:
+      - 'ATD-INFRA'
+      - 'spine2-base'
+      - 'OSPF_spine2'
+  - fqdn: 'spine3'
+    parentContainerName: 'Spine'
+    configlets:
+      - 'ATD-INFRA'
+      - 'spine3-base'
+      - 'OSPF_spine3'
+  - fqdn: 'spine4'
+    parentContainerName: 'Spine'
+    configlets:
+      - 'ATD-INFRA'
+      - 'spine4-base'
+      - 'OSPF_spine4'

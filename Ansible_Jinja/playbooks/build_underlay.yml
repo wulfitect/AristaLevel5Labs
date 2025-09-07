@@ -1,0 +1,9 @@
+---
+- name: Build configs from template
+  hosts: fabric
+  tasks:
+    - name: Build from Jinja
+      ansible.builtin.template:
+        src: ../templates/interfaces.j2
+        dest: configs/{{ inventory_hostname }}.cfg
+        mode: '0644'
