@@ -1,0 +1,16 @@
+---
+- name: Applying only default configlets (Arista labs) for reset
+  hosts: cvp1
+
+  vars_files:
+    - ../vars/CVP_model.yml
+
+  tasks:
+    - name: Apply configlets to devices
+      arista.cvp.cv_device_v3:
+        devices: "{{ CVP_DEVICES_DEFAULT }}"
+        apply_mode: strict
+      register: CVP_CHANGE
+    - name: Run tasks from previous task
+      arista.cvp.cv_task_v3:
+        tasks: "{{ CVP_CHANGE.taskIds }}"

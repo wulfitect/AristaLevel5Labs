@@ -1,0 +1,13 @@
+---
+- name: Run all pending tasks on CVP
+  hosts: cvp1
+  tasks:
+    - name: Grab and register facts
+      arista.cvp.cv_facts_v3:
+        facts: 
+          - tasks
+        regexp_filter: 'Pending'
+      register: CVP_FACTS
+    - name: Run pending tasks
+      arista.cvp.cv_task_v3:
+        tasks: "{{ CVP_FACTS.data.cvp_tasks | list }}"

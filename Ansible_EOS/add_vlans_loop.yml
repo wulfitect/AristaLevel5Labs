@@ -1,0 +1,12 @@
+---
+- name: Add VLANs to device(s)
+  hosts: leafs
+  tasks:
+    - name: Add VLANs
+      arista.eos.eos_vlans:
+        config:
+          - vlan_id: "{{ item.id }}"
+            name: "{{ item.name }}"
+            state: active
+        state: merged
+      loop: "{{ global_vlans }}"
