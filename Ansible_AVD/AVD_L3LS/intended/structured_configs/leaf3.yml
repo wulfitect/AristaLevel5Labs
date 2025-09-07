@@ -98,6 +98,14 @@ router_bgp:
       - 10010:10010
     redistribute_routes:
     - learned
+  - id: 20
+    tenant: ACME
+    rd: 192.168.101.3:10020
+    route_targets:
+      both:
+      - 10020:10020
+    redistribute_routes:
+    - learned
 static_routes:
 - vrf: MGMT
   destination_address_prefix: 0.0.0.0/0
@@ -147,6 +155,9 @@ vlans:
 - id: 10
   name: DMZ
   tenant: ACME
+- id: 20
+  name: Internal
+  tenant: ACME
 - id: 3009
   name: MLAG_iBGP_VRF_A
   trunk_groups:
@@ -170,6 +181,12 @@ vlan_interfaces:
   shutdown: false
   ip_address_virtual: 10.1.10.1/24
   vrf: VRF_A
+- name: Vlan20
+  tenant: ACME
+  description: Internal
+  shutdown: false
+  ip_address_virtual: 10.1.20.1/24
+  vrf: VRF_A
 - name: Vlan3009
   tenant: ACME
   type: underlay_peering
@@ -187,6 +204,14 @@ port_channel_interfaces:
   trunk_groups:
   - LEAF_PEER_L3
   - MLAG
+- name: Port-Channel7
+  description: host2_PortChannel host2
+  type: switched
+  shutdown: false
+  mode: access
+  vlans: '20'
+  spanning_tree_portfast: edge
+  mlag: 7
 ethernet_interfaces:
 - name: Ethernet1
   peer: leaf4
@@ -235,6 +260,16 @@ ethernet_interfaces:
   mtu: 1550
   type: routed
   ip_address: 192.168.103.17/31
+- name: Ethernet7
+  peer: host2
+  peer_interface: Ethernet1
+  peer_type: server
+  description: host2_Ethernet1
+  shutdown: false
+  type: port-channel-member
+  channel_group:
+    id: 7
+    mode: active
 mlag_configuration:
   domain_id: mlag2
   local_interface: Vlan4094
@@ -290,6 +325,8 @@ vxlan_interface:
       vlans:
       - id: 10
         vni: 10010
+      - id: 20
+        vni: 10020
       vrfs:
       - name: VRF_A
         vni: 10

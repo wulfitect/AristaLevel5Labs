@@ -98,6 +98,14 @@ router_bgp:
       - 10010:10010
     redistribute_routes:
     - learned
+  - id: 20
+    tenant: ACME
+    rd: 192.168.101.1:10020
+    route_targets:
+      both:
+      - 10020:10020
+    redistribute_routes:
+    - learned
 static_routes:
 - vrf: MGMT
   destination_address_prefix: 0.0.0.0/0
@@ -147,6 +155,9 @@ vlans:
 - id: 10
   name: DMZ
   tenant: ACME
+- id: 20
+  name: Internal
+  tenant: ACME
 - id: 3009
   name: MLAG_iBGP_VRF_A
   trunk_groups:
@@ -169,6 +180,12 @@ vlan_interfaces:
   description: DMZ
   shutdown: false
   ip_address_virtual: 10.1.10.1/24
+  vrf: VRF_A
+- name: Vlan20
+  tenant: ACME
+  description: Internal
+  shutdown: false
+  ip_address_virtual: 10.1.20.1/24
   vrf: VRF_A
 - name: Vlan3009
   tenant: ACME
@@ -308,6 +325,8 @@ vxlan_interface:
       vlans:
       - id: 10
         vni: 10010
+      - id: 20
+        vni: 10020
       vrfs:
       - name: VRF_A
         vni: 10
