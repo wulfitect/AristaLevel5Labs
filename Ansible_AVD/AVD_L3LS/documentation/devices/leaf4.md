@@ -226,9 +226,11 @@ vlan 4094
 
 | Interface | Description | Type | Channel Group | IP Address | VRF |  MTU | Shutdown | ACL In | ACL Out |
 | --------- | ----------- | -----| ------------- | ---------- | ----| ---- | -------- | ------ | ------- |
-| Ethernet3 | P2P_LINK_TO_SPINE1_Ethernet6 | routed | - | 192.168.103.19/31 | default | 1550 | False | - | - |
-| Ethernet4 | P2P_LINK_TO_SPINE2_Ethernet6 | routed | - | 192.168.103.21/31 | default | 1550 | False | - | - |
-| Ethernet5 | P2P_LINK_TO_SPINE3_Ethernet6 | routed | - | 192.168.103.23/31 | default | 1550 | False | - | - |
+| Ethernet3 | P2P_LINK_TO_SPINE1_Ethernet6 | routed | - | 192.168.103.25/31 | default | 1550 | False | - | - |
+| Ethernet4 | P2P_LINK_TO_SPINE2_Ethernet6 | routed | - | 192.168.103.27/31 | default | 1550 | False | - | - |
+| Ethernet5 | P2P_LINK_TO_SPINE3_Ethernet6 | routed | - | 192.168.103.29/31 | default | 1550 | False | - | - |
+| Ethernet6 | P2P_LINK_TO_SPINE4_Ethernet6 | routed | - | 192.168.103.31/31 | default | 1550 | False | - | - |
+| Ethernet9 | - | routed | - | 10.1.5.1/24 | VRF_A | - | False | - | - |
 
 #### Ethernet Interfaces Device Configuration
 
@@ -249,26 +251,39 @@ interface Ethernet3
    no shutdown
    mtu 1550
    no switchport
-   ip address 192.168.103.19/31
+   ip address 192.168.103.25/31
 !
 interface Ethernet4
    description P2P_LINK_TO_SPINE2_Ethernet6
    no shutdown
    mtu 1550
    no switchport
-   ip address 192.168.103.21/31
+   ip address 192.168.103.27/31
 !
 interface Ethernet5
    description P2P_LINK_TO_SPINE3_Ethernet6
    no shutdown
    mtu 1550
    no switchport
-   ip address 192.168.103.23/31
+   ip address 192.168.103.29/31
+!
+interface Ethernet6
+   description P2P_LINK_TO_SPINE4_Ethernet6
+   no shutdown
+   mtu 1550
+   no switchport
+   ip address 192.168.103.31/31
 !
 interface Ethernet7
    description host2_Ethernet2
    no shutdown
    channel-group 7 mode active
+!
+interface Ethernet9
+   no shutdown
+   no switchport
+   vrf VRF_A
+   ip address 10.1.5.1/24
 ```
 
 ### Port-Channel Interfaces
@@ -553,10 +568,13 @@ ip route vrf MGMT 0.0.0.0/0 192.168.0.1
 | 192.168.101.11 | 65001 | default | - | Inherited from peer group EVPN-OVERLAY-PEERS | Inherited from peer group EVPN-OVERLAY-PEERS | - | Inherited from peer group EVPN-OVERLAY-PEERS | - | - | - |
 | 192.168.101.12 | 65001 | default | - | Inherited from peer group EVPN-OVERLAY-PEERS | Inherited from peer group EVPN-OVERLAY-PEERS | - | Inherited from peer group EVPN-OVERLAY-PEERS | - | - | - |
 | 192.168.101.13 | 65001 | default | - | Inherited from peer group EVPN-OVERLAY-PEERS | Inherited from peer group EVPN-OVERLAY-PEERS | - | Inherited from peer group EVPN-OVERLAY-PEERS | - | - | - |
-| 192.168.103.18 | 65001 | default | - | Inherited from peer group IPv4-UNDERLAY-PEERS | Inherited from peer group IPv4-UNDERLAY-PEERS | - | - | - | - | - |
-| 192.168.103.20 | 65001 | default | - | Inherited from peer group IPv4-UNDERLAY-PEERS | Inherited from peer group IPv4-UNDERLAY-PEERS | - | - | - | - | - |
-| 192.168.103.22 | 65001 | default | - | Inherited from peer group IPv4-UNDERLAY-PEERS | Inherited from peer group IPv4-UNDERLAY-PEERS | - | - | - | - | - |
+| 192.168.101.14 | 65001 | default | - | Inherited from peer group EVPN-OVERLAY-PEERS | Inherited from peer group EVPN-OVERLAY-PEERS | - | Inherited from peer group EVPN-OVERLAY-PEERS | - | - | - |
+| 192.168.103.24 | 65001 | default | - | Inherited from peer group IPv4-UNDERLAY-PEERS | Inherited from peer group IPv4-UNDERLAY-PEERS | - | - | - | - | - |
+| 192.168.103.26 | 65001 | default | - | Inherited from peer group IPv4-UNDERLAY-PEERS | Inherited from peer group IPv4-UNDERLAY-PEERS | - | - | - | - | - |
+| 192.168.103.28 | 65001 | default | - | Inherited from peer group IPv4-UNDERLAY-PEERS | Inherited from peer group IPv4-UNDERLAY-PEERS | - | - | - | - | - |
+| 192.168.103.30 | 65001 | default | - | Inherited from peer group IPv4-UNDERLAY-PEERS | Inherited from peer group IPv4-UNDERLAY-PEERS | - | - | - | - | - |
 | 10.255.251.4 | Inherited from peer group MLAG-IPv4-UNDERLAY-PEER | VRF_A | - | Inherited from peer group MLAG-IPv4-UNDERLAY-PEER | Inherited from peer group MLAG-IPv4-UNDERLAY-PEER | - | - | - | - | - |
+| 10.1.5.254 | 1 | VRF_A | - | - | - | - | - | - | - | - |
 
 #### Router BGP EVPN Address Family
 
@@ -614,15 +632,21 @@ router bgp 65299
    neighbor 192.168.101.13 peer group EVPN-OVERLAY-PEERS
    neighbor 192.168.101.13 remote-as 65001
    neighbor 192.168.101.13 description spine3
-   neighbor 192.168.103.18 peer group IPv4-UNDERLAY-PEERS
-   neighbor 192.168.103.18 remote-as 65001
-   neighbor 192.168.103.18 description spine1_Ethernet6
-   neighbor 192.168.103.20 peer group IPv4-UNDERLAY-PEERS
-   neighbor 192.168.103.20 remote-as 65001
-   neighbor 192.168.103.20 description spine2_Ethernet6
-   neighbor 192.168.103.22 peer group IPv4-UNDERLAY-PEERS
-   neighbor 192.168.103.22 remote-as 65001
-   neighbor 192.168.103.22 description spine3_Ethernet6
+   neighbor 192.168.101.14 peer group EVPN-OVERLAY-PEERS
+   neighbor 192.168.101.14 remote-as 65001
+   neighbor 192.168.101.14 description spine4
+   neighbor 192.168.103.24 peer group IPv4-UNDERLAY-PEERS
+   neighbor 192.168.103.24 remote-as 65001
+   neighbor 192.168.103.24 description spine1_Ethernet6
+   neighbor 192.168.103.26 peer group IPv4-UNDERLAY-PEERS
+   neighbor 192.168.103.26 remote-as 65001
+   neighbor 192.168.103.26 description spine2_Ethernet6
+   neighbor 192.168.103.28 peer group IPv4-UNDERLAY-PEERS
+   neighbor 192.168.103.28 remote-as 65001
+   neighbor 192.168.103.28 description spine3_Ethernet6
+   neighbor 192.168.103.30 peer group IPv4-UNDERLAY-PEERS
+   neighbor 192.168.103.30 remote-as 65001
+   neighbor 192.168.103.30 description spine4_Ethernet6
    redistribute connected route-map RM-CONN-2-BGP
    !
    vlan 10
@@ -648,8 +672,12 @@ router bgp 65299
       route-target import evpn 10:10
       route-target export evpn 10:10
       router-id 192.168.101.4
+      neighbor 10.1.5.254 remote-as 1
       neighbor 10.255.251.4 peer group MLAG-IPv4-UNDERLAY-PEER
       redistribute connected
+      !
+      address-family ipv4
+         neighbor 10.1.5.254 activate
 ```
 
 ## BFD
